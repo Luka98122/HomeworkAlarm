@@ -4,7 +4,12 @@ def myFunc(t):
         print("t is 1")
     
     print("This is still in the function")
+with open ("TEST.txt", 'r') as m:
+    e =m.readlines()
+    print(e)
+    print("HERE")
 
+gold = 100
 f = 2
 print("Hello world")
 print(f)
@@ -22,3 +27,7 @@ for i in range(10):
         print("o",end='')
     print("")
 
+with open("TEST.txt", 'wt') as t:
+    t.write(str(gold)+'\n')
+    for i in range(10):
+        t.write(str(i) + "\n")

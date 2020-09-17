@@ -1,26 +1,35 @@
-print('Hello world')
-gold = 100
+import json
+from datetime import datetime
+import time
+
+def saveFunction (fileTo, Object):
+    u = open (fileTo, 'wt')
+    json.dump(Object, u)
+    u.close()
+
+def loadFunction (fileFrom):
+    u = open (fileFrom, 'r')
+    parsedJson = json.load(u)
+    u.close()
+    return parsedJson
+    
+nickName = "Triple Threat"
+myList = []
+MyDict = {
+    "numbers" : myList,
+    "Nickname" : nickName
+}
+for i in range(10):
+    myList.append(i)
 
 try:
-    with open ("TEST.txt", 'r') as m:
-        e = m.readlines()
-        print(e)
-        print
-        
-        gold = int(e[0]) * 2
-        
-except FileNotFoundError:
-    print('File not found')
+    MyDict = loadFunction('File.txt')
+except FileNotFoundError :
+    u = open('File.txt', 'wt')
+    saveFunction('File.txt', myList)
+    u.close()
 
-print('File read')
-
-
-with open("TEST.txt", 'wt') as t:
-    
-    t.write(str(gold)+'\n')
-   
-
-    for i in range(10):
-        t.write(str(i) + "\n")
-
-print(gold)
+for i in range (10):
+    MyDict['numbers'][i] = MyDict['numbers'][i] * 2
+saveFunction('File.txt', MyDict)
+print(MyDict)

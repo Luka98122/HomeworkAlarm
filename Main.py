@@ -27,7 +27,7 @@ subjects = {
 
 
 def debugGetLocalAssignments():
-    assgnTitles = {'Srpski': ['https://podrska.ossmarkovic.edu.rs/2020/10/14/%d0%b2%d0%b0%d0%b6%d0%bd%d0%be-%d0%be%d0%b1%d0%b0%d0%b2%d0%b5%d1%88%d1%82%d0%b5%d1%9a%d0%b5-%d0%b7%d0%b0-%d1%83%d1%87%d0%b5%d0%bd%d0%b8%d0%ba%d0%b5-5-1-5-2-%d0%b8-5-4-%d0%be%d0%b4%d0%b5%d1%99%d0%b5',
+    newDict = {'Srpski': ['https://podrska.ossmarkovic.edu.rs/2020/10/14/%d0%b2%d0%b0%d0%b6%d0%bd%d0%be-%d0%be%d0%b1%d0%b0%d0%b2%d0%b5%d1%88%d1%82%d0%b5%d1%9a%d0%b5-%d0%b7%d0%b0-%d1%83%d1%87%d0%b5%d0%bd%d0%b8%d0%ba%d0%b5-5-1-5-2-%d0%b8-5-4-%d0%be%d0%b4%d0%b5%d1%99%d0%b5',
             'Важно обавештење за ученике 5/1, 5/2 и 5/4 одељења'],
  'Matematika': ['https://podrska.ossmarkovic.edu.rs/2020/10/12/5-15-35-4-%d0%be%d0%b1%d0%b0%d0%b2%d0%b5%d1%88%d1%82%d0%b5%d1%9a%d0%b5-%d0%b7%d0%b0-%d1%83%d1%87%d0%b5%d0%bd%d0%b8%d0%ba%d0%b5-%d0%bd%d0%b0-online-%d0%bd%d0%b0%d1%81%d1%82%d0%b0%d0%b2%d0%b8',
                 '5-1,5-3,5-4 &#8211; Обавештење за ученике на online настави'],
@@ -56,7 +56,7 @@ def debugGetLocalAssignments():
  'Gradansko': ['https://podrska.ossmarkovic.edu.rs/2020/10/05/%d0%ba%d0%be%d0%bc%d0%b1%d0%b8%d0%bd%d0%be%d0%b2%d0%b0%d0%bd%d0%b0-%d0%bd%d0%b0%d1%81%d1%82%d0%b0%d0%b2%d0%b0-%d0%bf%d0%b0%d0%bd%d0%b4%d0%b5%d0%bc%d0%b8%d1%98%d0%b0-%d0%b8%d1%81%d0%ba%d1%83',
                'Комбинована настава, пандемија – искуства ђака  5/1, 5/2, 5/3, '
                '5/4']}
-    return assgnTitles
+    return newDict
 
 def getNewestAssignmentFromAll ():
     return debugGetLocalAssignments() # Don't talk to the server while developing
@@ -66,7 +66,7 @@ def getNewestAssignmentFromAll ():
         subjectPrieviews[subject]= a
     return subjectPrieviews
 
-assgnTitles = getNewestAssignmentFromAll()
+newDict = getNewestAssignmentFromAll()
 
 print("-------------------------------------------------")
 
@@ -167,11 +167,11 @@ secondDict = {'Srpski': ['https://podrska.ossmarkovic.edu.rs/2020/10/14/%d0%b2%d
 
 oldDict = readFromFile(FILENAME)
 if len(oldDict) == 0:
-    saveToFile(FILENAME, k )
+    saveToFile(FILENAME, secondDict)
     oldDict = readFromFile(FILENAME)
 
-theDIFF = dictDiff(assgnTitles, oldDict)
-print(theDIFF)
-saveToFile(FILENAME,assgnTitles)
+theDiff = dictDiff(newDict, oldDict)
+print(theDiff)
+saveToFile(FILENAME,newDict)
 
 print("-----------------------")

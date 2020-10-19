@@ -24,44 +24,7 @@ subjects = {
 
 
 
-def getNewestAssignment (url):
-    response = requests.get(url)
-    html = response.text
-    #FindsOpeningTag
-    stringSearchedFor = 'class="post-text">'
-    indexOfString = html.find(stringSearchedFor)
 
-    # Find closing tag
-    indexOfClosing = html.find('</p>', indexOfString)
-
-    a = (html[indexOfString+len(stringSearchedFor):indexOfClosing])
-    if indexOfString == -1:
-        return "Nema lekcije"
-    return a.replace("&hellip;", "").replace("&nbsp", "")
-
-def getTitleText (url):
-    response = requests.get(url)
-    html = response.text
-    #FindsOpeningTag
-    stringSearchedFor = '<h2 class="entry-title fw-400">'
-    indexOfString = html.find(stringSearchedFor)
-    if indexOfString == -1:
-        print("Didnt find this class")
-        return ["Didn't find this", "No title"]
-    indexOfClosing = html.find('</h2>')
-    x = (html[indexOfString+len(stringSearchedFor):indexOfClosing])
-    beginigLink = x.find("https:")
-    endLink = x.find('/"')
-    link = (x[beginigLink:endLink])
-
-    titleSearchedFor = 'title="'
-    titleStart = x.find(titleSearchedFor)
-    titleEnd = x.find('">')
-    title = x[titleStart+len(titleSearchedFor):titleEnd]
-
-    returns = [link, title]
-
-    return returns
 
 def debugGetLocalAssignments():
     assgnTitles = {'Srpski': ['https://podrska.ossmarkovic.edu.rs/2020/10/14/%d0%b2%d0%b0%d0%b6%d0%bd%d0%be-%d0%be%d0%b1%d0%b0%d0%b2%d0%b5%d1%88%d1%82%d0%b5%d1%9a%d0%b5-%d0%b7%d0%b0-%d1%83%d1%87%d0%b5%d0%bd%d0%b8%d0%ba%d0%b5-5-1-5-2-%d0%b8-5-4-%d0%be%d0%b4%d0%b5%d1%99%d0%b5',
@@ -107,6 +70,54 @@ assgnTitles = getNewestAssignmentFromAll()
 
 print("-------------------------------------------------")
 
+def getNewestAssignment (url):
+    response = requests.get(url)
+    html = response.text
+    #FindsOpeningTag
+    stringSearchedFor = 'class="post-text">'
+    indexOfString = html.find(stringSearchedFor)
+
+    # Find closing tag
+    indexOfClosing = html.find('</p>', indexOfString)
+
+    a = (html[indexOfString+len(stringSearchedFor):indexOfClosing])
+    if indexOfString == -1:
+        return "Nema lekcije"
+    return a.replace("&hellip;", "").replace("&nbsp", "")
+
+
+
+def dictDiff(oldDict,newDict):
+    changes = {}
+    for s in oldDict.keys():
+        if oldDict[s] != newDict[s]:
+            changes[s] = newDict[s]
+    
+    return changes
+
+def getTitleText (url):
+    response = requests.get(url)
+    html = response.text
+    #FindsOpeningTag
+    stringSearchedFor = '<h2 class="entry-title fw-400">'
+    indexOfString = html.find(stringSearchedFor)
+    if indexOfString == -1:
+        print("Didnt find this class")
+        return ["Didn't find this", "No title"]
+    indexOfClosing = html.find('</h2>')
+    x = (html[indexOfString+len(stringSearchedFor):indexOfClosing])
+    beginigLink = x.find("https:")
+    endLink = x.find('/"')
+    link = (x[beginigLink:endLink])
+
+    titleSearchedFor = 'title="'
+    titleStart = x.find(titleSearchedFor)
+    titleEnd = x.find('">')
+    title = x[titleStart+len(titleSearchedFor):titleEnd]
+
+    returns = [link, title]
+
+    return returns
 
 def saveToFile (Filename, objecct):
     fp = open(Filename, "w")
@@ -114,13 +125,15 @@ def saveToFile (Filename, objecct):
     fp.close()
 
 def readFromFile (Filename):
-    fp = open(Filename, "r")
-    a =json.load(fp)
-    return a
-    fp.close()
-
-saveToFile(FILENAME, assgnTitles)
-a = readFromFile("assgnJson")
+    try:
+        fp = open(Filename, "r")
+        parsedDict = json.load(fp)
+        fp.close()
+    except FileNotFoundError:
+        return {}
+    except json.JSONDecodeError:
+        return {}
+    return parsedDict
 
 k = {'Srpski': ['https://podrska.ossmarkovic.edu.rs/2020/10/14/%d0%b2%d0%b0%d0%b6%d0%bd%d0%be-%d0%be%d0%b1%d0%b0%d0%b2%d0%b5%d1%88%d1%82%d0%b5%d1%9a%d0%b5-%d0%b7%d0%b0-%d1%83%d1%87%d0%b5%d0%bd%d0%b8%d0%ba%d0%b5-5-1-5-2-%d0%b8-5-4-%d0%be%d0%b4%d0%b5%d1%99%d0%b5',
             'Важно обавештење за ученике 5/1, 5/2 и 5/4 одељења'],
@@ -152,15 +165,14 @@ k = {'Srpski': ['https://podrska.ossmarkovic.edu.rs/2020/10/14/%d0%b2%d0%b0%d0%b
                'Комбинована настава, пандемија – искуства ђака  5/1, 5/2, 5/3, '
                '5/4']}
 
+oldDict = readFromFile(FILENAME)
+if len(oldDict) == 0:
+    saveToFile(FILENAME, k )
+    oldDict = readFromFile(FILENAME)
 
-
-def dictDiff(oldDict,newDict):
-    changes = {}
-    for s in oldDict.keys():
-        if oldDict[s] != newDict[s]:
-            changes[s] = newDict[s]
-    return changes
+u = dictDiff(assgnTitles, oldDict)
+print(u)
+saveToFile(FILENAME,assgnTitles)
 
 u = dictDiff(assgnTitles, k)
 print("-----------------------")
-print(u)

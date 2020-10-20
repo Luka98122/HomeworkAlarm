@@ -167,7 +167,7 @@ secondDict = {'Srpski': ['https://podrska.ossmarkovic.edu.rs/2020/10/14/%d0%b2%d
 
 oldDict = readFromFile(FILENAME)
 if len(oldDict) == 0:
-    saveToFile(FILENAME, secondDict)
+    saveToFile(FILENAME, newDict)
     oldDict = readFromFile(FILENAME)
 
 theDiff = dictDiff(newDict, oldDict)

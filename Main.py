@@ -3,12 +3,17 @@ import pprint
 import json
 import random
 import os
+import sys
 
 TEST_MODE = 0 
 randFileName = str(random.randint(1,2000000000000000)) + ".txt"
 FILENAME = 'assigments.txt'
 DiffFolder = "Diffs"
-OUTPUT_FOLDER = '\\Users\\luka\\source\\repos\\Homework Alarm\\Diffs'
+
+if sys.platform.startswith('win32'):
+    OUTPUT_FOLDER = '\\Users\\luka\\source\\repos\\Homework Alarm\\Diffs'
+else:
+    OUTPUT_FOLDER = '/tmp/homebotSend/1'
 outputFile =  os.path.join(OUTPUT_FOLDER,randFileName ) 
 print(outputFile)
 

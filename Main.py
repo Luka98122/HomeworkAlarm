@@ -1,8 +1,17 @@
 import requests
 import pprint
 import json
+import random
+import os
 
+TEST_MODE = 0 
+randFileName = str(random.randint(1,2000000000000000)) + ".txt"
 FILENAME = 'assigments.txt'
+DiffFolder = "Diffs"
+OUTPUT_FOLDER = '\\Users\\luka\\source\\repos\\Homework Alarm\\Diffs'
+outputFile =  os.path.join(OUTPUT_FOLDER,randFileName ) 
+print(outputFile)
+
 
 subjects = {
     "Srpski" : "https://podrska.ossmarkovic.edu.rs/v-%d1%80%d0%b0%d0%b7%d1%80%d0%b5%d0%b4-%d1%81%d1%80%d0%bf%d1%81%d0%ba%d0%b8-%d1%98%d0%b5%d0%b7%d0%b8%d0%ba/",
@@ -30,8 +39,8 @@ def debugGetLocalAssignments():
     newDict = {'Srpski': ['https://podrska.ossmarkovic.edu.rs/2020/10/14/%d0%b2%d0%b0%d0%b6%d0%bd%d0%be-%d0%be%d0%b1%d0%b0%d0%b2%d0%b5%d1%88%d1%82%d0%b5%d1%9a%d0%b5-%d0%b7%d0%b0-%d1%83%d1%87%d0%b5%d0%bd%d0%b8%d0%ba%d0%b5-5-1-5-2-%d0%b8-5-4-%d0%be%d0%b4%d0%b5%d1%99%d0%b5',
             'Важно обавештење за ученике 5/1, 5/2 и 5/4 одељења'],
  'Matematika': ['https://podrska.ossmarkovic.edu.rs/2020/10/12/5-15-35-4-%d0%be%d0%b1%d0%b0%d0%b2%d0%b5%d1%88%d1%82%d0%b5%d1%9a%d0%b5-%d0%b7%d0%b0-%d1%83%d1%87%d0%b5%d0%bd%d0%b8%d0%ba%d0%b5-%d0%bd%d0%b0-online-%d0%bd%d0%b0%d1%81%d1%82%d0%b0%d0%b2%d0%b8',
-                '5-1,5-3,5-4 &#8211; Обавештење за ученике на online настави'],
- 'Spanski': ['https://podrska.ossmarkovic.edu.rs/2020/10/13/10-%d0%b8-11-%d1%87%d0%b0%d1%81-%d0%b0%d0%b1%d0%b5%d1%86%d0%b5%d0%b4%d0%b0',
+                '5-1,5-3,5-4 &#8211; Обаешење за ученике на online настави'],
+ 'Spanski': ['https://podrska.ossmakovic.edu.rs/2020/10/13/10-%d0%b8-11-%d1%87%d0%b0%d1%81-%d0%b0%d0%b1%d0%b5%d1%86%d0%b5%d0%b4%d0%b0',
              '10. И 11. час Абецеда'],
  'Istorija': ['https://podrska.ossmarkovic.edu.rs/2020/10/06/%d0%bf%d1%80%d0%b0%d0%b8%d1%81%d1%82%d0%be%d1%80%d0%b8%d1%98%d0%b0',
               'Праисторија'],
@@ -46,7 +55,7 @@ def debugGetLocalAssignments():
  'Tehnika': ['https://podrska.ossmarkovic.edu.rs/2020/10/12/%d1%81%d0%b0%d0%be%d0%b1%d1%80%d0%b0%d1%9b%d0%b0%d1%98-%d0%b2%d1%80%d1%81%d1%82%d0%b5-%d0%b8-%d1%81%d1%82%d1%80%d1%83%d0%ba%d1%82%d1%83%d1%80%d0%b0',
              'Саобраћај, врсте и структура'],
  'Informatika': ['https://podrska.ossmarkovic.edu.rs/2020/09/21/%d0%bd%d0%b0%d1%81%d1%82%d0%b0%d0%b2%d0%b0-%d0%bd%d0%b0-%d0%b4%d0%b0%d1%99%d0%b8%d0%bd%d1%83-%d0%b8%d0%b7-%d0%b8%d0%bd%d1%84%d0%be%d1%80%d0%bc%d0%b0%d1%82%d0%b8%d0%ba%d0%b5-%d0%b8-%d1%80%d0%b0',
-                 'Настава на даљину из Информатике и рачунараства 5 разред'],
+                 'Настава на даљину из Информатике и рчунараства 5 разред'],
  'Engleski': ['https://podrska.ossmarkovic.edu.rs/2020/10/06/%d0%b4%d0%be%d0%bc%d0%b0%d1%9b%d0%b8-%d0%b7%d0%b0%d0%b4%d0%b0%d1%82%d0%b0%d0%ba-%d0%b7%d0%b0-%d0%bf%d0%b5%d1%80%d0%b8%d0%be-5-10-17-10-2020',
               'Домаћи задатак за перио 5.10.-17.10.2020.'],
  'Francuski': ["Didn't find this", 'No title'],
@@ -57,9 +66,34 @@ def debugGetLocalAssignments():
                'Комбинована настава, пандемија – искуства ђака  5/1, 5/2, 5/3, '
                '5/4']}
     return newDict
+def getTitleText (url):
+    response = requests.get(url)
+    html = response.text
+    #FindsOpeningTag
+    stringSearchedFor = '<h2 class="entry-title fw-400">'
+    indexOfString = html.find(stringSearchedFor)
+    if indexOfString == -1:
+        print("Didnt find this class")
+        return ["Didn't find this", "No title"]
+    indexOfClosing = html.find('</h2>')
+    x = (html[indexOfString+len(stringSearchedFor):indexOfClosing])
+    beginigLink = x.find("https:")
+    endLink = x.find('/"')
+    link = (x[beginigLink:endLink])
+
+    titleSearchedFor = 'title="'
+    titleStart = x.find(titleSearchedFor)
+    titleEnd = x.find('">')
+    title = x[titleStart+len(titleSearchedFor):titleEnd]
+
+    returns = [link, title]
+
+    return returns
+
 
 def getNewestAssignmentFromAll ():
-    return debugGetLocalAssignments() # Don't talk to the server while developing
+    if TEST_MODE == 1:
+        return debugGetLocalAssignments() # Don't talk to the server while developing
     subjectPrieviews = {}
     for subject in subjects.keys():
         a = getTitleText(subjects[subject])
@@ -95,30 +129,6 @@ def dictDiff(oldDict,newDict):
     
     return changes
 
-def getTitleText (url):
-    response = requests.get(url)
-    html = response.text
-    #FindsOpeningTag
-    stringSearchedFor = '<h2 class="entry-title fw-400">'
-    indexOfString = html.find(stringSearchedFor)
-    if indexOfString == -1:
-        print("Didnt find this class")
-        return ["Didn't find this", "No title"]
-    indexOfClosing = html.find('</h2>')
-    x = (html[indexOfString+len(stringSearchedFor):indexOfClosing])
-    beginigLink = x.find("https:")
-    endLink = x.find('/"')
-    link = (x[beginigLink:endLink])
-
-    titleSearchedFor = 'title="'
-    titleStart = x.find(titleSearchedFor)
-    titleEnd = x.find('">')
-    title = x[titleStart+len(titleSearchedFor):titleEnd]
-
-    returns = [link, title]
-
-    return returns
-
 def saveToFile (Filename, objecct):
     fp = open(Filename, "w")
     json.dump(objecct, fp)
@@ -135,7 +145,7 @@ def readFromFile (Filename):
         return {}
     return parsedDict
 
-secondDict = {'Srpski': ['https://podrska.ossmarkovic.edu.rs/2020/10/14/%d0%b2%d0%b0%d0%b6%d0%bd%d0%be-%d0%be%d0%b1%d0%b0%d0%b2%d0%b5%d1%88%d1%82%d0%b5%d1%9a%d0%b5-%d0%b7%d0%b0-%d1%83%d1%87%d0%b5%d0%bd%d0%b8%d0%ba%d0%b5-5-1-5-2-%d0%b8-5-4-%d0%be%d0%b4%d0%b5%d1%99%d0%b5',
+oldDict = {'Srpski': ['https://podrska.ossmarkovic.edu.rs/2020/10/14/%d0%b2%d0%b0%d0%b6%d0%bd%d0%be-%d0%be%d0%b1%d0%b0%d0%b2%d0%b5%d1%88%d1%82%d0%b5%d1%9a%d0%b5-%d0%b7%d0%b0-%d1%83%d1%87%d0%b5%d0%bd%d0%b8%d0%ba%d0%b5-5-1-5-2-%d0%b8-5-4-%d0%be%d0%b4%d0%b5%d1%99%d0%b5',
             'Важно обавештење за ученике 5/1, 5/2 и 5/4 одељења'],
  'Matematika': ['https://podrska.ossmarkovic.edu.rs/2020/10/12/5-15-35-4-%d0%be%d0%b1%d0%b0%d0%b2%d0%b5%d1%88%d1%82%d0%b5%d1%9a%d0%b5-%d0%b7%d0%b0-%d1%83%d1%87%d0%b5%d0%bd%d0%b8%d0%ba%d0%b5-%d0%bd%d0%b0-online-%d0%bd%d0%b0%d1%81%d1%82%d0%b0%d0%b2%d0%b8',
                 '5-1,5-3,5-4 &#8211; Обавештење за ученике на online настави'],
@@ -171,7 +181,17 @@ if len(oldDict) == 0:
     oldDict = readFromFile(FILENAME)
 
 theDiff = dictDiff(newDict, oldDict)
-print(theDiff)
+
+if len(theDiff) > 0:
+    diffFile = open(outputFile, "wt", encoding="utf8")
+
+    for subject in theDiff.keys():
+        diffFile.writelines(subject + "\n")
+        diffFile.write(theDiff[subject][1] + "\n")
+        diffFile.write(theDiff[subject][0] + "\n")
+
+    diffFile.close()
+#print(theDiff)
 saveToFile(FILENAME,newDict)
 
 print("-----------------------")
